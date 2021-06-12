@@ -32,10 +32,10 @@ def API_PLUS_O_AUTH():
     return API
 
 
-def get_twitter_user_data():
+def get_twitter_user_data(API):
 
     #call func that gets twitter API ready
-    api = API_PLUS_O_AUTH()
+    api = API
 
     #ASK USER FOR TWITTER NAME
     user_id = input("ENTER TWITTER NAME: ").lower().replace(" ", "")
@@ -49,8 +49,10 @@ def get_twitter_user_data():
     #what to do when user is not found?
     while True:
         try:
-            print("User was found")
-            time.sleep(2)
+            print("\t**** User was found ****")
+            time.sleep(1)
+            print("\n\n\t Retrieving Data......... ")
+            time.sleep(1.4)
         except tweepy.TweepError as error:
             print("\n\nUser not found, try again")
             if error[0]['code'] == 50 or error[0]['message'] == 'User not found.':
@@ -63,10 +65,8 @@ def get_twitter_user_data():
 
 
 def get_latest_reply_id_and_message(data):
-    print(data)
     #get tweet ID
     tweet_id = data.status.in_reply_to_status_id
-    print("[*****]tweet_id = ", tweet_id, " data type= ", type(tweet_id))
 
     #get latest message posted
     latest_message = data.status.text
@@ -80,7 +80,21 @@ def get_latest_reply_id_and_message(data):
     return message_plus_tweetId
 
 
-def reply(data):
-    #data.update_status()
-    pass
+def reply(data, API):
+    print("\n\n\n\n******** INSIDE REPLY func ********")
+    count = 0
+    mimic_tweet = ''
+    for char in range(0, len(data['message'])):
+        if (char % 2) == 0:
+            # if the num count is even, will capiralize character
+            mimic_tweet += (data['message'][char]).upper()
+            print(mimic_tweet)
+        else:
+            mimic_tweet += (data['message'][char]).lower()
+
+    print("\n\nFinal mimic tweet= ", mimic_tweet)
+
+    #reply
+    API.update_status(in_reply_to_status_id=data['tweet_id'], status=mimic_tweet)
+
     #create a tweet
